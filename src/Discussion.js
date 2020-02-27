@@ -22,7 +22,7 @@ export default class Discussion extends Component {
     this.subscribe()
     AppState.addEventListener('change', this.handleAppStateChange)
     NetInfo.addEventListener('connectionChange', this.netInfoChange);
-    const { navigation: { state: { params }}} = this.props
+    const { route: { params }} = this.props
     try {
       const commentData = await API.graphql(
         graphqlOperation(listCommentsByTalkId, {
@@ -38,7 +38,6 @@ export default class Discussion extends Component {
     } catch (err) {
       console.log('error fetching comments: ', err)
     }
-
     try {
       const { username } = await Auth.currentAuthenticatedUser()
       this.setState({ username })
@@ -53,12 +52,13 @@ export default class Discussion extends Component {
       this.subscribe()
     }
     if (appState === 'background') {
+      this.setState({ subscribed: false })
       this.unsubscribe()
     }
   }
   subscribe() {
     if (this.state.subscribed) return
-    const { navigation: { state: { params }}} = this.props
+    const { route: { params }} = this.props
     this.subscription = API.graphql(
       graphqlOperation(OnCreateComment, { talkId: params.id })
     )
@@ -92,7 +92,7 @@ export default class Discussion extends Component {
   }
   createMessage = async () => {
     if (!this.state.message) return
-    const { navigation: { state: { params }}} = this.props
+    const { route: { params }} = this.props
     const { message, username } = this.state
     const comments = [...this.state.comments, { message, createdBy: this.state.username }]
     this.setState({ comments, message: '' })
@@ -168,7 +168,6 @@ export default class Discussion extends Component {
 
 const styles = StyleSheet.create({
   input: {
-    width: dimensions.width - 50,
     height: 50,
     width,
     backgroundColor: '#fff',

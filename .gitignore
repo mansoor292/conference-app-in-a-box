@@ -69,3 +69,6 @@ awsconfiguration.json
 
 .expo
 web-build
+android/
+
+ios/
