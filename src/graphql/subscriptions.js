@@ -77,20 +77,6 @@ export const onCreateComment = `subscription onCreateCommentWithId($talkId: ID!)
   onCreateCommentWithId(talkId: $talkId) {
     id
     talkId
-    talk {
-      id
-      name
-      speakerName
-      speakerBio
-      time
-      location
-      summary
-      twitter
-      github
-      comments {
-        nextToken
-      }
-    }
     message
     createdAt
     createdBy

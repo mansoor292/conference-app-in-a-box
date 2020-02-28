@@ -2,6 +2,7 @@ import React from 'react'
 import {
   Image,
   View,
+  Platform,
   StyleSheet
 } from 'react-native'
 
@@ -25,14 +26,14 @@ const styles = StyleSheet.create({
   logo: {
     position: 'absolute',
     left: 10,
-    bottom: 7,
-    width: 120,
+    bottom: Platform.OS === 'ios' ? 8 : 11,
+    width: 140,
     height: 35
   },
   container: {
     backgroundColor: colors.primary,
     alignItems: 'center',
-    height: 88
+    height: Platform.OS === 'ios' ? 45 : 55
   }
 })
 
