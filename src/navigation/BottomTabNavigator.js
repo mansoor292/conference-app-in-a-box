@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome } from '@expo/vector-icons'
+import { Platform } from 'react-native';
 
 import Schedule from '../Schedule'
 import Profile from '../Profile'
@@ -36,7 +37,17 @@ export default function BottomTabNavigator({ navigation, route }) {
 					tabBarIcon: ({ focused }) => <FontAwesome color={tintColor(focused)} size={20} name='user' />,
 				}}
 			/>
+		{Platform.OS === 'ios' &&
+			<BottomTab.Screen
+				name="Map"
+				component={Map}
+				options={{
+					title: 'Map',
+					tabBarIcon: ({ focused }) => <FontAwesome color={tintColor(focused)} size={20} name='map' />,
+				}}
+			/>
 
+		}
 	</BottomTab.Navigator>
 	);
 }

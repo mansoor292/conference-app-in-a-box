@@ -8,8 +8,8 @@ import { colors, typography, dimensions, logo } from './theme'
 import { API, graphqlOperation } from 'aws-amplify'
 import { listTalks } from './graphql/queries'
 
-const day1 = 'November 10'
-const day2 = 'November 11'
+const day1 = '11/10/2018'
+const day2 = '11/11/2019'
 
 class Schedule extends Component {
   state = {
@@ -50,7 +50,7 @@ class Schedule extends Component {
             {
               talkData.map((talk, i) => (
                 <TouchableOpacity
-                  key={i} 
+                  key={i}
                   onPress={
                     () => this.props.navigation.push('Talk', talk)
                   }
@@ -61,7 +61,7 @@ class Schedule extends Component {
                         <Image
                           style={styles.avatar}
                           resizeMode='cover'
-                          source={{ uri: talk.speakerAvatar }}
+                          source={{ uri: talk.speakerAvatar || 'https:/cdn.catalogs.com/images/app-logo.png' }}
                         />
                       </View>
                       <View style={styles.infoContainer}>
@@ -114,7 +114,7 @@ const Stack = createStackNavigator();
 
 function ScheduleNav() {
   return (
-    <Stack.Navigator      
+    <Stack.Navigator
       screenOptions={{
         headerStyle: {
           shadowRadius: 0,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderTopColor: "rgba(255, 255, 255, .1)",
     borderBottomColor: "rgba(255, 255, 255, .1)",
-    left: 0, 
+    left: 0,
     bottom: -1
   },
   listContainer: {

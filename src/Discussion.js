@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {AppState, KeyboardAvoidingView, ScrollView, TextInput, StyleSheet, Text, View , Dimensions, NetInfo} from 'react-native';
+import {AppState, KeyboardAvoidingView, ScrollView, TextInput, StyleSheet, Text, View , Dimensions } from 'react-native';
+import {NetInfo} from '@react-native-community/netinfo';
 import { API, graphqlOperation, Auth } from 'aws-amplify'
 import Constants from 'expo-constants'
 
@@ -21,7 +22,7 @@ export default class Discussion extends Component {
   async componentDidMount() {
     this.subscribe()
     AppState.addEventListener('change', this.handleAppStateChange)
-    NetInfo.addEventListener('connectionChange', this.netInfoChange);
+   const unsubscribeNI = NetInfo.addEventListener('connectionChange', this.netInfoChange);
     const { route: { params }} = this.props
     try {
       const commentData = await API.graphql(
@@ -45,7 +46,7 @@ export default class Discussion extends Component {
   }
   componentWillUnmount() {
     this.unsubscribe()
-    NetInfo.removeEventListener('connectionChange', this.netInfoChange)
+    //unsubscribeNI()
   }
   handleAppStateChange = (appState) => {
     if (appState === 'active') {

@@ -9,7 +9,7 @@ export default class Talk extends Component {
       <ScrollView>
         <View style={styles.container}>
           <Image
-            source={{uri: params.speakerAvatar}}
+            source={{uri: params.speakerAvatar || 'https://cdn.catalogs.com/images/app-logo.png'}}
             resizeMode='cover'
             style={styles.avatar}
           />

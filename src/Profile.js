@@ -1,28 +1,33 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {TouchableHighlight, SafeAreaView, TextInput, StyleSheet, Text, View} from 'react-native';
 import { Auth } from 'aws-amplify'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { colors, typography, dimensions } from './theme'
 import BaseHeader from './BaseHeader'
 
-export default class Profile extends Component {
-  state = {
+function Profile() {
+  const [state, setState] = useState({
     username: '',
     email: '',
     twitter: 'dabit3',
     github: 'dabit3',
     isEditing: false
-  }
-  async componentDidMount() {
-    const user = await Auth.currentAuthenticatedUser()
-    const { signInUserSession: { idToken: { payload }}} = user
-    this.setState({
-      username: user.username,
-      email: payload.email
-    })
-  }
-  toggleForm = () => this.setState({ isEditing: !this.state.isEditing })
-  onChange = (key, value) => this.setState({ [key]: value })
+  });
+
+   React.useEffect(() => {
+    async function loadResourcesAndDataAsync() {
+        const user = await Auth.currentAuthenticatedUser()
+        const { signInUserSession: { idToken: { payload }}} = user
+        setState({...state,
+          username: user.username,
+          email: payload.email
+        })
+    }
+    loadResourcesAndDataAsync();
+    }, []);
+
+  toggleForm = () => setState({...state, isEditing: !state.isEditing })
+  onChange = (key, value) => setState({...state, [key]: value })
   signOut = () => {
     Auth.signOut()
       .then(() => {
@@ -32,8 +37,7 @@ export default class Profile extends Component {
           console.log('err: ', err)
       })
   }
-  render() {
-    const buttonText = this.state.isEditing ? 'Save' : 'Edit Profile'
+    const buttonText = state.isEditing ? 'Save' : 'Edit Profile'
     return (
       <SafeAreaView style={styles.outerContainer}>
         <BaseHeader />
@@ -42,16 +46,16 @@ export default class Profile extends Component {
             <Text style={styles.username}>{this.state.username}</Text>
             <Text style={styles.email}>{this.state.email}</Text>
             {
-              !this.state.isEditing ? (
+              !state.isEditing ? (
                 <Social
-                  twitter={this.state.twitter}
-                  github={this.state.github}
+                  twitter={state.twitter}
+                  github={state.github}
                 />
               ) : (
                 <Form
                   onChange={this.onChange}
-                  twitter={this.state.twitter}
-                  github={this.state.github}
+                  twitter={state.twitter}
+                  github={state.github}
                 />
               )
             }
@@ -81,7 +85,6 @@ export default class Profile extends Component {
         </View>
       </SafeAreaView>
     );
-  }
 }
 
 const Social = ({ twitter, github}) => (
@@ -197,3 +200,5 @@ const styles = StyleSheet.create({
     fontFamily: typography.primar
   }
 });
+
+export default Profile;

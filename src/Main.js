@@ -19,11 +19,31 @@ const Stack = createStackNavigator();
 export function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const [initialNavigationState, setInitialNavigationState] = React.useState();
+  const [signedIn, setSignedIn] = React.useState(false);
+  
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
+
+      try {
+        await Auth.currentAuthenticatedUser()
+        setSignedIn(true);
+      }
+      catch (err) { console.log('user not signed in') }
+      
+      Hub.listen('auth', (data) => {
+        const { payload: { event } } = data
+        if (event === 'signIn') {
+          setSignedIn(true)
+        }
+        if (event === 'signOut' && signedIn) {
+          setSignedIn(false)
+        }
+      })
+
+
       try {
         SplashScreen.preventAutoHide();
 
@@ -58,7 +78,8 @@ export function App(props) {
   else {
     return (
       <View style={styles.appContainer}>
-        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+       {!signedIn && <Logo />}
+       {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
           <Stack.Navigator>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
