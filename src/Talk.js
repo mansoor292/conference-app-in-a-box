@@ -4,7 +4,8 @@ import { dimensions, colors, typography } from './theme'
 
 export default class Talk extends Component {
   render() {
-    const { route: { params }} = this.props
+    const { route:{ params }} = this.props
+    console.log('params:', params)
     return (
       <ScrollView>
         <View style={styles.container}>

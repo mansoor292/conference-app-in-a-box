@@ -1,0 +1,13 @@
+{
+    "CreateAPIKey": 0,
+    "AppSyncApiName": "rnconfinabox",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authrnconfinabox58de14db",
+            "Outputs.UserPoolId"
+        ]
+    },
+    "S3DeploymentBucket": "amplify-rnconfinabox-dev-160914-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/5ca0979a36775bcae1dc385127d53242a0cb73a5"
+}

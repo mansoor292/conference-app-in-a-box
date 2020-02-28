@@ -1,111 +1,71 @@
-import React from 'react'
-import { View, Image, StyleSheet } from 'react-native'
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
+import * as React from 'react';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { SplashScreen } from 'expo';
+import * as Font from 'expo-font';
+import { FontAwesome } from '@expo/vector-icons'
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AmplifyTheme from 'aws-amplify-react-native/src/AmplifyTheme'
 import { Hub, Auth } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react-native'
-import AmplifyTheme from 'aws-amplify-react-native/src/AmplifyTheme'
-import { FontAwesome } from '@expo/vector-icons'
-import { Font } from 'expo'
-
-import Schedule from './Schedule'
-import Profile from './Profile'
-import Map from './Map'
 
 import { colors, logo } from './theme'
 
-const TabNavigator = createBottomTabNavigator({
-  Schedule: {
-    screen: Schedule
-  },
-  Profile: {
-    screen: Profile
-  },
-  Map: {
-    screen: Map,
-  }
-}, {
-  tabBarOptions: {
-    activeTintColor: colors.highlight,
-    inactiveTintColor: '#fafafa',
-    style: {
-      backgroundColor: colors.primary
+import BottomTabNavigator from './navigation/BottomTabNavigator';
+import useLinking from './navigation/useLinking';
+
+const Stack = createStackNavigator();
+
+export function App(props) {
+  const [isLoadingComplete, setLoadingComplete] = React.useState(false);
+  const [initialNavigationState, setInitialNavigationState] = React.useState();
+  const containerRef = React.useRef();
+  const { getInitialState } = useLinking(containerRef);
+  // Load any resources or data that we need prior to rendering the app
+  React.useEffect(() => {
+    async function loadResourcesAndDataAsync() {
+      try {
+        SplashScreen.preventAutoHide();
+
+        // Load our initial navigation state
+        setInitialNavigationState(await getInitialState());
+
+        // Load fonts
+        await Font.loadAsync({
+          ...FontAwesome.font,
+          'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+          'Gotham Rounded': require('./assets/fonts/GothamRnd-Light.otf'),
+          'GothamRnd Medium': require('./assets/fonts/GothamRnd-Medium.otf'),
+          'Gotham Bold': require('./assets/fonts/GothamRnd-Bold.otf')
+        });
+      }
+      catch (e) {
+        // We might want to provide this error information to an error reporting service
+        console.warn(e);
+      }
+      finally {
+        setLoadingComplete(true);
+        SplashScreen.hide();
+      }
     }
-  },
-  defaultNavigationOptions: ({ navigation }) => ({
-    tabBarIcon: ({ tintColor }) => {
-      const { routeName } = navigation.state
-      if (routeName === 'Schedule') {
-        return <FontAwesome color={tintColor} size={20} name='calendar' />
-      }
-      if (routeName === 'Map') {
-        return <FontAwesome color={tintColor} size={20} name='map' />
-      }
-      return <FontAwesome color={tintColor} size={20} name='user' />
-    }
-  })
-})
 
-class TabNavWithProps extends React.Component {
-  componentDidMount() {
-    Font.loadAsync({
-      'Gotham Rounded': require('./assets/fonts/GothamRnd-Light.otf'),
-      'GothamRnd Medium': require('./assets/fonts/GothamRnd-Medium.otf'),
-      'Gotham Bold': require('./assets/fonts/GothamRnd-Bold.otf')
-    });
-  }
-  static router = TabNavigator.router
-  render() {
-    return(
-      <TabNavigator screenProps={{...this.props}} {...this.props}  />
-    )
-  }
-}
+    loadResourcesAndDataAsync();
+  }, []);
 
-const App = createAppContainer(TabNavWithProps)
-
-const theme = {
-  ...AmplifyTheme,
-  button: {
-    ...AmplifyTheme.button,
-    backgroundColor: colors.primaryLight
-  },
-  sectionFooterLink: {
-    ...AmplifyTheme.sectionFooterLink,
-    color: colors.primaryLight
-  },
-  buttonDisabled: {
-    ...AmplifyTheme.buttonDisabled,
-    backgroundColor: colors.primaryOpaque(0.6)
+  if (!isLoadingComplete && !props.skipLoadingScreen) {
+    return null;
   }
-}
-
-class AppWithAuth extends React.Component {
-  state = {
-    signedIn: true
-  }
-  async componentDidMount() {
-    try {
-      await Auth.currentAuthenticatedUser()
-      this.setState({ signedIn: true })
-    } catch (err) { console.log('user not signed in') }
-    Hub.listen('auth', (data) => {
-      const { payload: { event } } = data
-      if (event === 'signIn') {
-        this.setState({ signedIn: true })
-      }
-      if (event === 'signOut' && this.state.signedIn) {
-        this.setState({ signedIn: false })
-      }
-    })
-  }
-  render() {
-    const AppComponent = withAuthenticator(App, null, null, null, theme)
+  else {
     return (
       <View style={styles.appContainer}>
-        {!this.state.signedIn && <Logo />}
-        <AppComponent {...this.props} />
+        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
+          <Stack.Navigator>
+            <Stack.Screen name="Root" component={BottomTabNavigator} />
+          </Stack.Navigator>
+        </NavigationContainer>
       </View>
-    )
+    );
   }
 }
 
@@ -134,4 +94,22 @@ const styles = StyleSheet.create({
   }
 })
 
-export default AppWithAuth
+
+const theme = {
+  ...AmplifyTheme,
+  button: {
+    ...AmplifyTheme.button,
+    backgroundColor: colors.primaryLight
+  },
+  sectionFooterLink: {
+    ...AmplifyTheme.sectionFooterLink,
+    color: colors.primaryLight
+  },
+  buttonDisabled: {
+    ...AmplifyTheme.buttonDisabled,
+    backgroundColor: colors.primaryOpaque(0.6)
+  }
+}
+
+
+export default withAuthenticator(App, null, null, null, theme);

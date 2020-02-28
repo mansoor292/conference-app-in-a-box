@@ -1,0 +1,20 @@
+{
+    "appName": "rnconfinabox",
+    "roleName": "pinpointLambdaRolea78baacd",
+    "cloudWatchPolicyName": "cloudWatchPolicya78baacd",
+    "pinpointPolicyName": "pinpointPolicya78baacd",
+    "authPolicyName": "pinpoint_amplify_a78baacd",
+    "unauthPolicyName": "pinpoint_amplify_a78baacd",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}

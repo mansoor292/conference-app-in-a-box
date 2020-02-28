@@ -1,0 +1,71 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "amplify-rnconfinabox-dev-160914-authRole",
+			"UnauthRoleArn": "arn:aws:iam::416324974983:role/amplify-rnconfinabox-dev-160914-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::416324974983:role/amplify-rnconfinabox-dev-160914-authRole",
+			"Region": "us-east-1",
+			"DeploymentBucketName": "amplify-rnconfinabox-dev-160914-deployment",
+			"UnauthRoleName": "amplify-rnconfinabox-dev-160914-unauthRole",
+			"StackName": "amplify-rnconfinabox-dev-160914",
+			"StackId": "arn:aws:cloudformation:us-east-1:416324974983:stack/amplify-rnconfinabox-dev-160914/814fc6c0-597b-11ea-b5ae-12c5c4f78283",
+			"AmplifyAppId": "dbljpmdhj1u0t"
+		}
+	},
+	"auth": {
+		"rnconfinabox58de14db": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-rnconfinabox-dev-160914-deployment/amplify-cfn-templates/auth/rnconfinabox58de14db-cloudformation-template.yml",
+				"logicalId": "authrnconfinabox58de14db"
+			},
+			"lastPushTimeStamp": "2020-02-27T16:48:04.258Z",
+			"output": {
+				"AppClientSecret": "v0ldvf69p2haj70e0007mv16v8qe3f5q9b9b4bo9skf0utqu79u",
+				"UserPoolId": "us-east-1_6ZCEwTFy3",
+				"AppClientIDWeb": "4t00fk53ao70mi8h4ieqdke564",
+				"AppClientID": "54i3smhplme4mnakaksnbpbf8a",
+				"IdentityPoolId": "us-east-1:0e75f929-2dca-48ba-ae1f-4d97f7607f54",
+				"IdentityPoolName": "rnconfinabox58de14db_identitypool_58de14db__dev",
+				"UserPoolName": "rnconfinabox58de14db_userpool_58de14db"
+			},
+			"lastPushDirHash": "0pxruJDFmUkpJ8LwxREveXoSAEw="
+		}
+	},
+	"api": {
+		"rnconfinabox": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "AMAZON_COGNITO_USER_POOLS",
+				"GraphQLAPIIdOutput": "6odw4mngmveftna3uslcnhlkaq",
+				"GraphQLAPIEndpointOutput": "https://rtrylfgqavcallijq3e4qofqle.appsync-api.us-east-1.amazonaws.com/graphql"
+			},
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-rnconfinabox-dev-160914-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apirnconfinabox"
+			},
+			"lastPushTimeStamp": "2020-02-27T16:48:04.254Z",
+			"lastPushDirHash": "6POSOPWSUujhaE4S/5th/0vGkv4="
+		}
+	},
+	"analytics": {
+		"rnconfinabox": {
+			"service": "Pinpoint",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-rnconfinabox-dev-160914-deployment/amplify-cfn-templates/analytics/pinpoint-cloudformation-template.json",
+				"logicalId": "analyticsrnconfinabox"
+			},
+			"lastPushTimeStamp": "2020-02-27T16:48:04.258Z",
+			"output": {
+				"appName": "rnconfinabox-dev",
+				"Region": "us-east-1",
+				"Id": "29a2967f30d8407b8ce45730ec50b72c"
+			},
+			"lastPushDirHash": "oKGu/qJwap8vZ0xJPwl5jZyBsGA="
+		}
+	}
+}

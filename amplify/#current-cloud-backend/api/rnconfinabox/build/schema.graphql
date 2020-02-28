@@ -1,0 +1,339 @@
+type Talk {
+  id: ID!
+  name: String!
+  speakerName: String!
+  speakerBio: String!
+  time: String
+  timeStamp: String
+  date: String
+  location: String
+  summary: String!
+  twitter: String
+  github: String
+  speakerAvatar: String
+  comments(createdAt: ModelStringKeyConditionInput, filter: ModelCommentFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelCommentConnection
+}
+
+type Comment {
+  id: ID!
+  talkId: ID
+  talk: Talk
+  message: String
+  createdAt: String
+  createdBy: String
+  deviceId: ID
+}
+
+type Report {
+  id: ID!
+  commentId: ID!
+  comment: String!
+  talkTitle: String!
+  deviceId: ID
+}
+
+type ModelCommentConnection {
+  items: [Comment]
+  nextToken: String
+}
+
+type Query {
+  listCommentsByTalkId(talkId: ID!): ModelCommentConnection
+  getTalk(id: ID!): Talk
+  listTalks(filter: ModelTalkFilterInput, limit: Int, nextToken: String): ModelTalkConnection
+  getComment(id: ID!): Comment
+  listComments(filter: ModelCommentFilterInput, limit: Int, nextToken: String): ModelCommentConnection
+  getReport(id: ID!): Report
+  listReports(filter: ModelReportFilterInput, limit: Int, nextToken: String): ModelReportConnection
+}
+
+type Subscription {
+  onCreateCommentWithId(talkId: ID!): Comment @aws_subscribe(mutations: ["createComment"])
+  onCreateTalk: Talk @aws_subscribe(mutations: ["createTalk"])
+  onUpdateTalk: Talk @aws_subscribe(mutations: ["updateTalk"])
+  onDeleteTalk: Talk @aws_subscribe(mutations: ["deleteTalk"])
+  onCreateComment: Comment @aws_subscribe(mutations: ["createComment"])
+  onUpdateComment: Comment @aws_subscribe(mutations: ["updateComment"])
+  onDeleteComment: Comment @aws_subscribe(mutations: ["deleteComment"])
+  onCreateReport: Report @aws_subscribe(mutations: ["createReport"])
+  onUpdateReport: Report @aws_subscribe(mutations: ["updateReport"])
+  onDeleteReport: Report @aws_subscribe(mutations: ["deleteReport"])
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelTalkConnection {
+  items: [Talk]
+  nextToken: String
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+input ModelTalkFilterInput {
+  id: ModelIDInput
+  name: ModelStringInput
+  speakerName: ModelStringInput
+  speakerBio: ModelStringInput
+  time: ModelStringInput
+  timeStamp: ModelStringInput
+  date: ModelStringInput
+  location: ModelStringInput
+  summary: ModelStringInput
+  twitter: ModelStringInput
+  github: ModelStringInput
+  speakerAvatar: ModelStringInput
+  and: [ModelTalkFilterInput]
+  or: [ModelTalkFilterInput]
+  not: ModelTalkFilterInput
+}
+
+input CreateTalkInput {
+  id: ID
+  name: String!
+  speakerName: String!
+  speakerBio: String!
+  time: String
+  timeStamp: String
+  date: String
+  location: String
+  summary: String!
+  twitter: String
+  github: String
+  speakerAvatar: String
+}
+
+input UpdateTalkInput {
+  id: ID!
+  name: String
+  speakerName: String
+  speakerBio: String
+  time: String
+  timeStamp: String
+  date: String
+  location: String
+  summary: String
+  twitter: String
+  github: String
+  speakerAvatar: String
+}
+
+input DeleteTalkInput {
+  id: ID
+}
+
+type Mutation {
+  createTalk(input: CreateTalkInput!, condition: ModelTalkConditionInput): Talk
+  updateTalk(input: UpdateTalkInput!, condition: ModelTalkConditionInput): Talk
+  deleteTalk(input: DeleteTalkInput!, condition: ModelTalkConditionInput): Talk
+  createComment(input: CreateCommentInput!, condition: ModelCommentConditionInput): Comment
+  updateComment(input: UpdateCommentInput!, condition: ModelCommentConditionInput): Comment
+  deleteComment(input: DeleteCommentInput!, condition: ModelCommentConditionInput): Comment
+  createReport(input: CreateReportInput!, condition: ModelReportConditionInput): Report
+  updateReport(input: UpdateReportInput!, condition: ModelReportConditionInput): Report
+  deleteReport(input: DeleteReportInput!, condition: ModelReportConditionInput): Report
+}
+
+input ModelTalkConditionInput {
+  name: ModelStringInput
+  speakerName: ModelStringInput
+  speakerBio: ModelStringInput
+  time: ModelStringInput
+  timeStamp: ModelStringInput
+  date: ModelStringInput
+  location: ModelStringInput
+  summary: ModelStringInput
+  twitter: ModelStringInput
+  github: ModelStringInput
+  speakerAvatar: ModelStringInput
+  and: [ModelTalkConditionInput]
+  or: [ModelTalkConditionInput]
+  not: ModelTalkConditionInput
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelCommentFilterInput {
+  id: ModelIDInput
+  talkId: ModelIDInput
+  message: ModelStringInput
+  createdAt: ModelStringInput
+  createdBy: ModelStringInput
+  deviceId: ModelIDInput
+  and: [ModelCommentFilterInput]
+  or: [ModelCommentFilterInput]
+  not: ModelCommentFilterInput
+}
+
+input CreateCommentInput {
+  id: ID
+  talkId: ID
+  message: String
+  createdAt: String
+  createdBy: String
+  deviceId: ID
+}
+
+input UpdateCommentInput {
+  id: ID!
+  talkId: ID
+  message: String
+  createdAt: String
+  createdBy: String
+  deviceId: ID
+}
+
+input DeleteCommentInput {
+  id: ID
+}
+
+input ModelCommentConditionInput {
+  talkId: ModelIDInput
+  message: ModelStringInput
+  createdAt: ModelStringInput
+  createdBy: ModelStringInput
+  deviceId: ModelIDInput
+  and: [ModelCommentConditionInput]
+  or: [ModelCommentConditionInput]
+  not: ModelCommentConditionInput
+}
+
+type ModelReportConnection {
+  items: [Report]
+  nextToken: String
+}
+
+input ModelReportFilterInput {
+  id: ModelIDInput
+  commentId: ModelIDInput
+  comment: ModelStringInput
+  talkTitle: ModelStringInput
+  deviceId: ModelIDInput
+  and: [ModelReportFilterInput]
+  or: [ModelReportFilterInput]
+  not: ModelReportFilterInput
+}
+
+input CreateReportInput {
+  id: ID
+  commentId: ID!
+  comment: String!
+  talkTitle: String!
+  deviceId: ID
+}
+
+input UpdateReportInput {
+  id: ID!
+  commentId: ID
+  comment: String
+  talkTitle: String
+  deviceId: ID
+}
+
+input DeleteReportInput {
+  id: ID
+}
+
+input ModelReportConditionInput {
+  commentId: ModelIDInput
+  comment: ModelStringInput
+  talkTitle: ModelStringInput
+  deviceId: ModelIDInput
+  and: [ModelReportConditionInput]
+  or: [ModelReportConditionInput]
+  not: ModelReportConditionInput
+}
+
+input ModelStringKeyConditionInput {
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  between: [String]
+  beginsWith: String
+}
