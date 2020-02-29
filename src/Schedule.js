@@ -2,9 +2,9 @@ import React, {Component} from 'react'
 import {ActivityIndicator, Image, ScrollView, TouchableHighlight, TouchableOpacity, StyleSheet, SafeAreaView, Text, View} from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack';
 import Pager from './Pager'
-import BaseHeader from './BaseHeader'
 import { colors, typography, dimensions, logo } from './theme'
 
+import BaseHeader from './BaseHeader'
 import { API, graphqlOperation } from 'aws-amplify'
 import { listTalks } from './graphql/queries'
 
@@ -43,8 +43,8 @@ class Schedule extends Component {
       .sort((a, b) => new Date(parseInt(a.timeStamp)) - new Date(parseInt(b.timeStamp)))
     return (
       <SafeAreaView style={styles.outerContainer}>
-        <BaseHeader />
         <View style={styles.container}>
+
           <ScrollView>
             <View style={styles.listContainer}>
             {

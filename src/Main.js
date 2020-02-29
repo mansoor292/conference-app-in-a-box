@@ -11,20 +11,22 @@ import { withAuthenticator } from 'aws-amplify-react-native'
 
 import { colors, logo } from './theme'
 
-import BottomTabNavigator from './navigation/BottomTabNavigator';
+import BottomTabNavigator from './navigation/TabNavigator';
 import useLinking from './navigation/useLinking';
 
+import BaseHeader from './BaseHeader'
 const Stack = createStackNavigator();
 
 export function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const [initialNavigationState, setInitialNavigationState] = React.useState();
   const [signedIn, setSignedIn] = React.useState(false);
-  
+
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
+    console.log('Platfom:'+ Platform.OS);
     async function loadResourcesAndDataAsync() {
 
       try {
@@ -32,7 +34,7 @@ export function App(props) {
         setSignedIn(true);
       }
       catch (err) { console.log('user not signed in') }
-      
+
       Hub.listen('auth', (data) => {
         const { payload: { event } } = data
         if (event === 'signIn') {
@@ -72,6 +74,18 @@ export function App(props) {
     loadResourcesAndDataAsync();
   }, []);
 
+
+  const AppComponent = ()=> (
+           <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
+            <BaseHeader />
+            <BottomTabNavigator {...props} />
+          </NavigationContainer>
+  )
+
+  const withAth = () => {
+    withAuthenticator(AppComponent, null , null ,null, theme)
+  }
+
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return null;
   }
@@ -80,11 +94,7 @@ export function App(props) {
       <View style={styles.appContainer}>
        {!signedIn && <Logo />}
        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
-          <Stack.Navigator>
-            <Stack.Screen name="Root" component={BottomTabNavigator} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <AppComponent {...props}/>
       </View>
     );
   }

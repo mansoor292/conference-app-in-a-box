@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {SafeAreaView, ScrollView, TouchableHighlight, Linking, StyleSheet, Text, View} from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapViewc, { Marker } from 'react-native-maps';
 import { colors, typography, dimensions } from './theme'
 
 import BaseHeader from './BaseHeader'
@@ -11,6 +11,7 @@ export default class Map extends Component {
       .catch((err) => console.error('An error occurred', err));
   }
   render() {
+    var MapView = new MapViewc();
     return (
       <SafeAreaView style={styles.outerContainer}>
         <BaseHeader />

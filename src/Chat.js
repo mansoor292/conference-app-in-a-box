@@ -3,18 +3,21 @@ import {Platform, AppState, KeyboardAvoidingView, ScrollView, TextInput, StyleSh
 import  NetInfo from '@react-native-community/netinfo';
 import { API, graphqlOperation, Auth } from 'aws-amplify'
 import Constants from 'expo-constants'
+import { GiftedChat } from 'react-native-gifted-chat'
 
-import { listCommentsByTalkId } from './graphql/queries'
+import { listComments } from './graphql/queries'
 import { onCreateComment as OnCreateComment } from './graphql/subscriptions'
 import { createComment } from './graphql/mutations'
 import { colors, dimensions, typography } from './theme'
 
 const DEVICE_ID = Constants.installationId
 const { width } = Dimensions.get('window')
+import uuid from 'react-native-uuid';
+const chatid = uuid.parse('fa729d3f-6aca-4880-91ef-bf88ddc96e36');
 
 export default class Discussion extends Component {
   static navigationOptions = () => ({
-    title: "Discussion"
+    title: "Chat"
   })
   state = { comments: [], message: '', subscribed: false }
   scroller = React.createRef()
@@ -25,13 +28,10 @@ export default class Discussion extends Component {
     AppState.addEventListener('change', this.handleAppStateChange)
     Platform.OS!='web' && NetInfo.addEventListener(state => this.netInfoChange);
     const { route: { params } } = this.props
-    console.log(params.id);
     try {
       const commentData = await API.graphql(
-        graphqlOperation(listCommentsByTalkId, {
-          talkId: params.id
-        }))
-      const { data: { listCommentsByTalkId: { items } } } = commentData
+        graphqlOperation(listComments, ))
+      const { data: { listComments: { items } } } = commentData
       const comments = items.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
       this.setState({ comments }, () => {
         setTimeout(() => {
@@ -71,9 +71,8 @@ export default class Discussion extends Component {
   }
   subscribe() {
     if (this.state.subscribed) return
-    const { route: { params } } = this.props
     this.subscription = API.graphql(
-        graphqlOperation(OnCreateComment, { talkId: params.id })
+        graphqlOperation(OnCreateComment, { talkId: chatid })
       )
       .subscribe({
         next: data => {
@@ -102,7 +101,6 @@ export default class Discussion extends Component {
 
   createMessage = async() => {
     if (!this.state.message) return
-    const { route: { params } } = this.props
     const { message, username } = this.state
     const comments = [...this.state.comments, { message, createdBy: this.state.username }]
     this.setState({ comments, message: '' })
@@ -113,7 +111,7 @@ export default class Discussion extends Component {
       console.log(message);
       await API.graphql(graphqlOperation(createComment, {
         input: {
-          talkId: params.id,
+          talkId: chatid,
           message,
           createdBy: username,
           deviceId: DEVICE_ID
@@ -129,51 +127,11 @@ export default class Discussion extends Component {
   }
   render() {
     return (
-      <KeyboardAvoidingView
-      enabled
-      keyboardVerticalOffset={130}
-      behavior="padding"
-      style={styles.container}>
-        <View style={styles.scrollViewContainer}>
-          <ScrollView
-            contentContainerStyle={styles.scrollView}
-            ref={this.scroller}
-          >
-            {
-              !this.state.comments.length && (
-                <View style={styles.comment}>
-                  <Text style={styles.message}>No comments yet!</Text>
-                </View>
-              )
-            }
-            {
-              this.state.comments.map((c, i) => (
-                <View key={i} style={styles.comment}>
-                  <Text
-                    style={styles.message}
-                  >{c.message}</Text>
-                  <Text
-                    style={styles.createdBy}
-                  >{c.createdBy}</Text>
-                </View>
-              ))
-            }
-          </ScrollView>
-        </View>
-        <View>
-          <TextInput
-            value={this.state.message}
-            onChangeText={this.onChangeText}
-            style={styles.input}
-            onSubmitEditing={this.createMessage}
-            autoCapitalize='none'
-            placeholder='Discuss this talk.'
-            autoCorrect={false}
-          />
-          {/* <Button title='Send' onPress={this.createMessage} /> */}
-        </View>
-
-      </KeyboardAvoidingView>
+      <GiftedChat
+        messages={this.state.comments}
+        onSend={messages => this.createMessage(messages)}
+        user={this.state.username}
+      />
     );
   }
 }
